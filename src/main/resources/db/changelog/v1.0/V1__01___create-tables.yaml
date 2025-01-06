@@ -1,0 +1,311 @@
+databaseChangeLog:
+  - changeSet:
+      id: create_user_table
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: USER
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: email
+                  type: varchar(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: avatar_url
+                  type: varchar(512)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: bio
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create_table_article
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: ARTICLE
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: true
+              - column:
+                  name: title
+                  type: varchar(512)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: UUID
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: create_table_comments
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: COMMENT
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    unique: true
+              - column:
+                  name: article_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create_table_categories
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: CATEGORY
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create_table_tags
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: TAG
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create_table_article_tags
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: ARTICLE_TAGS
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: article_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tag_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: create_article_user_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_ARTICLE_USER
+            baseTableName: ARTICLE
+            baseColumnNames: USER_ID
+            referencedTableName: USER
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_user_comment_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_COMMENT_USER
+            baseTableName: COMMENT
+            baseColumnNames: USER_ID
+            referencedTableName: USER
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_article_comment_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_COMMENT_ARTICLE
+            baseTableName: COMMENT
+            baseColumnNames: ARTICLE_ID
+            referencedTableName: ARTICLE
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_article_category_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_ARTICLE_CATEGORY
+            baseTableName: ARTICLE
+            baseColumnNames: CATEGORY_ID
+            referencedTableName: CATEGORY
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_article_tags_article_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_ARTICLE_TAG
+            baseTableName: ARTICLE_TAGS
+            baseColumnNames: ARTICLE_ID
+            referencedTableName: ARTICLE
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_article_tags_tag_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_TAG_ARTICLE
+            baseTableName: ARTICLE_TAGS
+            baseColumnNames: TAG_ID
+            referencedTableName: TAG
+            referencedColumnNames: ID
