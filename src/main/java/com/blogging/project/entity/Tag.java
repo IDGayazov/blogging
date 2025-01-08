@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name="Tag")
@@ -17,7 +18,7 @@ public class Tag {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    Long id;
+    UUID id;
 
     @Column(name="name")
     String name;
