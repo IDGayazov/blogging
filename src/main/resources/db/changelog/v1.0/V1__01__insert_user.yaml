@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: insertDefaultUser
+      author: Ilnaz
+      changes:
+        - insert:
+            tableName: USER
+            columns:
+              - column:
+                  name: id
+                  value: 'b89dfc99-59dd-4906-823b-98cc990ff461'
+              - column:
+                  name: email
+                  value: 'user@mail.ru'
+              - column:
+                  name: name
+                  value: 'User'
+              - column:
+                  name: password
+                  value: '+ouUsippetc8S4RyxzIjiw=='
+              - column:
+                  name: created_at
+                  value: '01-11-2025'
+              - column:
+                  name: updated_at
+                  value: '01-11-2025'
+
