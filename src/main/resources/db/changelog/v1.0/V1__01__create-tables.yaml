@@ -8,7 +8,7 @@ databaseChangeLog:
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
         - createTable:
-            tableName: USER
+            tableName: USERS
             columns:
               - column:
                   name: id
@@ -249,10 +249,10 @@ databaseChangeLog:
       author: Ilnaz
       changes:
         - addForeignKeyConstraint:
-            constraintName: FK_ARTICLE_USER
+            constraintName: FK_ARTICLE_USERS
             baseTableName: ARTICLE
             baseColumnNames: USER_ID
-            referencedTableName: USER
+            referencedTableName: USERS
             referencedColumnNames: ID
 
   - changeSet:
@@ -260,10 +260,10 @@ databaseChangeLog:
       author: Ilnaz
       changes:
         - addForeignKeyConstraint:
-            constraintName: FK_COMMENT_USER
+            constraintName: FK_COMMENT_USERS
             baseTableName: COMMENT
             baseColumnNames: USER_ID
-            referencedTableName: USER
+            referencedTableName: USERS
             referencedColumnNames: ID
 
   - changeSet:

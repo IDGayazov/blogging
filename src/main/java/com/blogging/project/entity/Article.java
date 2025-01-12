@@ -33,7 +33,7 @@ public class Article {
     LocalDate updatedAt;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", referencedColumnName="id")
     User user;
 
     @ManyToOne
