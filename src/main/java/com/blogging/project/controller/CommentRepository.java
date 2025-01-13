@@ -43,7 +43,7 @@ public class CommentRepository {
         commentService.updateCommentById(commentId, commentDto);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/id")
     public void deleteCommentById(@PathVariable("id") UUID commentId){
         log.info("Request for delete comment with Id: {}", commentId);
         commentService.deleteCommentById(commentId);
