@@ -5,7 +5,7 @@ import com.blogging.project.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CategoryMapper {
 
     @Mapping(target="id", ignore=true)

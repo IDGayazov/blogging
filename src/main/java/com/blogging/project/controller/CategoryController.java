@@ -37,7 +37,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategory(@PathVariable("/id") UUID categoryId){
+    public void deleteCategory(@PathVariable("id") UUID categoryId){
         log.info("Request for delete category with Id: {}", categoryId);
         categoryService.deleteCategoryById(categoryId);
     }

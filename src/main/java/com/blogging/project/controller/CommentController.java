@@ -15,7 +15,7 @@ import java.util.UUID;
 @Slf4j
 @RequestMapping("/comments")
 @RequiredArgsConstructor
-public class CommentRepository {
+public class CommentController {
 
     private final CommentService commentService;
 
