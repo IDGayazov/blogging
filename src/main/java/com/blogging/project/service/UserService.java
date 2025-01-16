@@ -1,7 +1,6 @@
 package com.blogging.project.service;
 
 import com.blogging.project.dto.RegisterUserDto;
-import com.blogging.project.entity.User;
 import com.blogging.project.mapper.UserMapper;
 import com.blogging.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
