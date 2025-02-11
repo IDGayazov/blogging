@@ -13,8 +13,14 @@ databaseChangeLog:
                   name: email
                   value: 'user@mail.ru'
               - column:
-                  name: name
-                  value: 'User'
+                  name: username
+                  value: 'Admin'
+              - column:
+                  name: firstname
+                  value: 'Ilnaz'
+              - column:
+                  name: lastname
+                  value: 'Gayazov'
               - column:
                   name: password
                   value: '+ouUsippetc8S4RyxzIjiw=='
@@ -24,4 +30,7 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   value: '01-11-2025'
+              - column:
+                  name: role
+                  value: 'ROLE_ADMIN'
 

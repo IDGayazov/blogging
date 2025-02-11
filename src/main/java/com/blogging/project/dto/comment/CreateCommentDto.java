@@ -1,4 +1,4 @@
-package com.blogging.project.dto;
+package com.blogging.project.dto.comment;
 
 import java.util.UUID;
 

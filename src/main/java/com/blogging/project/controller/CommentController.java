@@ -1,7 +1,7 @@
 package com.blogging.project.controller;
 
-import com.blogging.project.dto.CreateCommentDto;
-import com.blogging.project.dto.UpdateCommentDto;
+import com.blogging.project.dto.comment.CreateCommentDto;
+import com.blogging.project.dto.comment.UpdateCommentDto;
 import com.blogging.project.entity.Comment;
 import com.blogging.project.service.CommentService;
 import lombok.RequiredArgsConstructor;

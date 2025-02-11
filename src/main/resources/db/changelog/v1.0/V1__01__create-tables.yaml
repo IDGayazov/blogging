@@ -29,7 +29,17 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: name
+                  name: username
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: firstname
+                  type: varchar(55)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: lastname
                   type: varchar(55)
                   constraints:
                     nullable: false
@@ -51,6 +61,11 @@ databaseChangeLog:
               - column:
                   name: updated_at
                   type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: varchar(20)
                   constraints:
                     nullable: false
 

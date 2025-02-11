@@ -1,7 +1,7 @@
 package com.blogging.project.controller;
 
-import com.blogging.project.dto.CreateArticleDto;
-import com.blogging.project.dto.UpdateArticleDto;
+import com.blogging.project.dto.article.CreateArticleDto;
+import com.blogging.project.dto.article.UpdateArticleDto;
 import com.blogging.project.entity.Article;
 import com.blogging.project.service.ArticleService;
 import lombok.RequiredArgsConstructor;

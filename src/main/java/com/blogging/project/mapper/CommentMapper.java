@@ -1,6 +1,6 @@
 package com.blogging.project.mapper;
 
-import com.blogging.project.dto.CreateCommentDto;
+import com.blogging.project.dto.comment.CreateCommentDto;
 import com.blogging.project.entity.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,4 +1,4 @@
-package com.blogging.project.dto;
+package com.blogging.project.dto.article;
 
 import java.time.LocalDate;
 import java.util.UUID;

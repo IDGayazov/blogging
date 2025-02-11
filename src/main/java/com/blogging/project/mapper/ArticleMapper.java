@@ -1,6 +1,6 @@
 package com.blogging.project.mapper;
 
-import com.blogging.project.dto.CreateArticleDto;
+import com.blogging.project.dto.article.CreateArticleDto;
 import com.blogging.project.entity.Article;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,6 +1,6 @@
 package com.blogging.project.service;
 
-import com.blogging.project.dto.CreateTagDto;
+import com.blogging.project.dto.other.CreateTagDto;
 import com.blogging.project.entity.Tag;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.repository.TagRepository;

@@ -1,6 +1,6 @@
 package com.blogging.project.mapper;
 
-import com.blogging.project.dto.CreateCategoryDto;
+import com.blogging.project.dto.other.CreateCategoryDto;
 import com.blogging.project.entity.Category;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

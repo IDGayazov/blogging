@@ -1,6 +1,6 @@
 package com.blogging.project.controller;
 
-import com.blogging.project.dto.CreateCategoryDto;
+import com.blogging.project.dto.other.CreateCategoryDto;
 import com.blogging.project.entity.Category;
 import com.blogging.project.service.CategoryService;
 import lombok.RequiredArgsConstructor;

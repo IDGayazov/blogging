@@ -1,6 +1,6 @@
 package com.blogging.project.controller;
 
-import com.blogging.project.dto.CreateTagDto;
+import com.blogging.project.dto.other.CreateTagDto;
 import com.blogging.project.entity.Tag;
 import com.blogging.project.service.TagService;
 import lombok.RequiredArgsConstructor;
