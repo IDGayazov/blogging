@@ -53,6 +53,7 @@ public class AuthenticationService {
                 .build();
 
         userService.create(user);
+        log.info("User with username: {} was created", user.getUsername());
 
         String jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);

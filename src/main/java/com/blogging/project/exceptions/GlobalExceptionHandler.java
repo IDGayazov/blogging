@@ -3,6 +3,7 @@ package com.blogging.project.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +39,22 @@ public class GlobalExceptionHandler {
                 .map(error -> new Violation(error.getField(), error.getDefaultMessage()))
                 .toList();
         return new ResponseEntity<>(new ValidationErrorResponse(violations), HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<AppError> userAlreadyExistsExceptionHandler(UserAlreadyExistsException ex){
+        log.error(ex.getMessage(), ex);
+        AppError appError = new AppError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(appError, HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<AppError> usernameNotFoundExceptionHandler(UsernameNotFoundException ex){
+        log.error(ex.getMessage(), ex);
+        AppError appError = new AppError(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(appError, HttpStatus.BAD_REQUEST);
     }
 
 }
