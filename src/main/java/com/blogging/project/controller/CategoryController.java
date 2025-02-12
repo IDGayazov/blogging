@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/v1/categories")
 @Slf4j
 @RequiredArgsConstructor
 public class CategoryController {

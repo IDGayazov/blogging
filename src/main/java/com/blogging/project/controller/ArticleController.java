@@ -21,7 +21,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/articles")
+@RequestMapping("v1/articles")
 public class ArticleController {
 
     private final ArticleService articleService;

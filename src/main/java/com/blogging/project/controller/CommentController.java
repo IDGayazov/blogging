@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @RestController
 @Slf4j
-@RequestMapping("/comments")
+@RequestMapping("v1/comments")
 @RequiredArgsConstructor
 public class CommentController {
 
