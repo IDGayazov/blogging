@@ -38,6 +38,9 @@ public class Article {
     @Column(name="content")
     String content;
 
+    @Column(name="avatar_url")
+    String avatarUrl;
+
     @Column(name="created_at")
     LocalDate createdAt;
 

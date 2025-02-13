@@ -29,7 +29,7 @@ public class ArticleService {
     private final CategoryRepository categoryRepository;
     private final ArticleMapper articleMapper;
 
-    public void saveArticle(CreateArticleDto articleDto){
+    public Article saveArticle(CreateArticleDto articleDto){
         Article article = articleMapper.toArticle(articleDto);
 
         Optional<User> userOpt = userRepository.findById(articleDto.userId());
@@ -47,12 +47,14 @@ public class ArticleService {
 
         articleRepository.save(article);
         log.info("Save article with id: {}", article.getId());
+
+        return article;
     }
 
     public Article getArticleById(UUID articleId){
-        Optional<Article> articleOpt = articleRepository.findById(articleId);
-        log.info("Fetch article with id: {}", articleId);
-        return articleOpt.orElseThrow(() -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId)));
+        log.info("Fetching article with id: {}", articleId);
+        return articleRepository.findById(articleId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId)));
     }
 
     public List<Article> getAllArticles(){
@@ -65,7 +67,7 @@ public class ArticleService {
         log.info("Delete article by Id: {}", articleId);
     }
 
-    public void updateArticleById(UUID articleId, UpdateArticleDto articleDto){
+    public Article updateArticleById(UUID articleId, UpdateArticleDto articleDto){
         Optional<Article> currentArticleOpt = articleRepository.findById(articleId);
         Article article = currentArticleOpt.orElseThrow(
                 () -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId))
@@ -80,9 +82,11 @@ public class ArticleService {
 
         article.setTitle(articleDto.title());
         article.setContent(articleDto.content());
-        article.setUpdatedAt(articleDto.updatedAt());
+        article.setAvatarUrl(articleDto.avatarUrl());
+        article.setUpdatedAt(LocalDate.now());
 
-        articleRepository.save(article);
+        Article updatedArticle = articleRepository.save(article);
         log.info("Update article with id: {}", articleId);
+        return updatedArticle;
     }
 }

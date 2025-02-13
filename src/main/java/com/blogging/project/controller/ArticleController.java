@@ -39,15 +39,15 @@ public class ArticleController {
     }
 
     @PostMapping
-    public void createArticle(@RequestBody CreateArticleDto articleDto){
+    public Article createArticle(@RequestBody CreateArticleDto articleDto){
         log.info("Receive request for saving article...");
-        articleService.saveArticle(articleDto);
+        return articleService.saveArticle(articleDto);
     }
 
     @PutMapping("/{id}")
-    public void updateArticle(@PathVariable("id") UUID articleId, @RequestBody UpdateArticleDto updateArticleDto){
+    public Article updateArticle(@PathVariable("id") UUID articleId, @RequestBody UpdateArticleDto updateArticleDto){
         log.info("Receive request for updating article with id: {}", articleId);
-        articleService.updateArticleById(articleId, updateArticleDto);
+        return articleService.updateArticleById(articleId, updateArticleDto);
     }
 
     @DeleteMapping("/{id}")

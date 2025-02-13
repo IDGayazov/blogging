@@ -104,6 +104,11 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: avatar_url
+                  type: text
+                  constraints:
+                    nullable: true
+              - column:
                   name: created_at
                   type: date
                   constraints:

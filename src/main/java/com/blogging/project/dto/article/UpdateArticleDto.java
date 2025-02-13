@@ -1,11 +1,10 @@
 package com.blogging.project.dto.article;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 public record UpdateArticleDto(
         String title,
         String content,
-        LocalDate updatedAt,
+        String avatarUrl,
         UUID categoryId
 ) {}

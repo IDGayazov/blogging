@@ -6,6 +6,7 @@ public record CreateArticleDto(
         UUID userId,
         String title,
         String content,
+        String avatarUrl,
         UUID categoryId
 ) {
 }
