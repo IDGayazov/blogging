@@ -31,12 +31,13 @@ public class TagService {
         return tagRepository.findAll();
     }
 
-    public void createTag(CreateTagDto tagDto){
+    public Tag createTag(CreateTagDto tagDto){
         Tag tag = new Tag();
         tag.setName(tagDto.name());
         tag.setCreatedAt(LocalDate.now());
-        tagRepository.save(tag);
+        Tag createdTag = tagRepository.save(tag);
         log.info("Tag with Id: {} was saved", tag.getId());
+        return createdTag;
     }
 
     public void deleteTagById(UUID tagId){

@@ -37,9 +37,9 @@ public class TagController {
     }
 
     @PostMapping
-    public void createTag(@RequestBody CreateTagDto tagDto){
+    public Tag createTag(@RequestBody CreateTagDto tagDto){
         log.info("Receive request for creating new tag with name: {}", tagDto.name());
-        tagService.createTag(tagDto);
+        return tagService.createTag(tagDto);
     }
 
     @DeleteMapping("/{id}")
