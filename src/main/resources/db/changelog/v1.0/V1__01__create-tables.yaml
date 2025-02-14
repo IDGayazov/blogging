@@ -295,6 +295,15 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
+      id: unique_constraint
+      author: Ilnaz
+      changes:
+        - addUniqueConstraint:
+            tableName: LIKE
+            columnNames: user_id, article_id
+            constraintName: unique_user_article
+
+  - changeSet:
       id: create_article_user_fk
       author: Ilnaz
       changes:
