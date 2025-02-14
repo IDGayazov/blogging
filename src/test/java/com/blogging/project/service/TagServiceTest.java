@@ -59,13 +59,13 @@ class TagServiceTest {
     }
 
     @Test
-    void getAllTags() {
+    void testGetAllTags() {
         tagService.getAllTags();
         verify(tagRepository).findAll();
     }
 
     @Test
-    void createTag() {
+    void testCreateTag() {
         final String tagName = "tag name";
         CreateTagDto tagDto = new CreateTagDto(tagName);
 
@@ -78,7 +78,7 @@ class TagServiceTest {
     }
 
     @Test
-    void deleteTagById() {
+    void testDeleteTagById() {
         UUID tagId = UUID.randomUUID();
         tagService.deleteTagById(tagId);
         verify(tagRepository).deleteById(tagId);

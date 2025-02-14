@@ -37,9 +37,9 @@ public class CategoryController {
     }
 
     @PostMapping
-    public void createCategory(@RequestBody CreateCategoryDto categoryDto){
+    public Category createCategory(@RequestBody CreateCategoryDto categoryDto){
         log.info("Request for saving categories");
-        categoryService.createCategory(categoryDto);
+        return categoryService.createCategory(categoryDto);
     }
 
     @DeleteMapping("/{id}")

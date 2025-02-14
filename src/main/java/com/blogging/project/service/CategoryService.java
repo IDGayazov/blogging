@@ -36,11 +36,12 @@ public class CategoryService {
         );
     }
 
-    public void createCategory(CreateCategoryDto categoryDto){
+    public Category createCategory(CreateCategoryDto categoryDto){
         Category category = categoryMapper.toCategory(categoryDto);
         category.setCreatedAt(LocalDate.now());
-        categoryRepository.save(category);
+        Category createdCategory = categoryRepository.save(category);
         log.info("Category with Id: {} was saved", category.getId());
+        return createdCategory;
     }
 
     public void deleteCategoryById(UUID categoryId){

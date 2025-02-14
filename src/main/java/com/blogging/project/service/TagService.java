@@ -40,7 +40,7 @@ public class TagService {
         return createdTag;
     }
 
-    public void deleteTagById(UUID tagId){
+    public void deleteTagById(UUID tagId) {
         tagRepository.deleteById(tagId);
         log.info("Tag with Id: {} was deleted", tagId);
     }
