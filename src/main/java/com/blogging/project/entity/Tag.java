@@ -30,13 +30,13 @@ public class Tag {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    UUID id;
+    private UUID id;
 
     @Column(name="name")
-    String name;
+    private String name;
 
     @Column(name="created_at")
-    LocalDate createdAt;
+    private LocalDate createdAt;
 
     @ManyToMany
     @JoinTable(
@@ -44,6 +44,6 @@ public class Tag {
         joinColumns = @JoinColumn(name="tag_id"),
         inverseJoinColumns = @JoinColumn(name="article_id")
     )
-    List<Article> articles;
+    private List<Article> articles;
 
 }

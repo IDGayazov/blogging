@@ -29,17 +29,17 @@ public class Category {
     @Id
     @Column(name="id")
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    UUID id;
+    private UUID id;
 
     @Column(name="name")
-    String name;
+    private String name;
 
     @Column(name="description")
-    String description;
+    private String description;
 
     @Column(name="created_at")
-    LocalDate createdAt;
+    private LocalDate createdAt;
 
     @OneToMany(mappedBy = "category")
-    List<Article> articles;
+    private List<Article> articles;
 }

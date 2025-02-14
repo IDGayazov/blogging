@@ -265,6 +265,36 @@ databaseChangeLog:
                     nullable: false
 
   - changeSet:
+      id: create_table_likes
+      author: Ilnaz
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - createTable:
+            tableName: LIKE
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  defaultValue: gen_random_uuid()
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    unique: true
+              - column:
+                  name: article_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+
+  - changeSet:
       id: create_article_user_fk
       author: Ilnaz
       changes:
@@ -328,4 +358,26 @@ databaseChangeLog:
             baseTableName: ARTICLE_TAGS
             baseColumnNames: TAG_ID
             referencedTableName: TAG
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_article_likes_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_LIKE_ARTICLE
+            baseTableName: LIKE
+            baseColumnNames: ARTICLE_ID
+            referencedTableName: ARTICLE
+            referencedColumnNames: ID
+
+  - changeSet:
+      id: create_user_likes_fk
+      author: Ilnaz
+      changes:
+        - addForeignKeyConstraint:
+            constraintName: FK_LIKE_USER
+            baseTableName: LIKE
+            baseColumnNames: USER_ID
+            referencedTableName: USERS
             referencedColumnNames: ID

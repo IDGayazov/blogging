@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -35,40 +36,43 @@ public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    UUID id;
+    private UUID id;
 
     @Column(name="email")
-    String email;
+    private String email;
 
     @Column(name="password")
-    String password;
+    private String password;
 
     @Column(name="username")
-    String username;
+    private String username;
 
     @Column(name="firstname")
-    String firstname;
+    private String firstname;
 
     @Column(name="lastname")
-    String lastname;
+    private String lastname;
 
     @Column(name="avatar_url")
-    String avatarUrl;
+    private String avatarUrl;
 
     @Column(name="bio")
-    String bio;
+    private String bio;
 
     @Column(name="created_at")
-    LocalDate createdAt;
+    private LocalDate createdAt;
 
     @Column(name="updated_at")
-    LocalDate updatedAt;
+    private LocalDate updatedAt;
 
     @OneToMany(mappedBy="user")
-    List<Article> articles;
+    private List<Article> articles;
 
     @OneToMany(mappedBy="user")
-    List<Comment> comments;
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Like> likes;
 
     @Enumerated(EnumType.STRING)
     @Column(name="role", nullable=false)
