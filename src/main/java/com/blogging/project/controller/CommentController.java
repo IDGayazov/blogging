@@ -39,15 +39,15 @@ public class CommentController {
     }
 
     @PostMapping
-    public void createComment(@RequestBody CreateCommentDto commentDto){
+    public Comment createComment(@RequestBody CreateCommentDto commentDto){
         log.info("Request for saving comment");
-        commentService.saveComment(commentDto);
+        return commentService.saveComment(commentDto);
     }
 
     @PutMapping("/{id}")
-    public void updateCommentById(@PathVariable("id") UUID commentId, UpdateCommentDto commentDto){
+    public Comment updateCommentById(@PathVariable("id") UUID commentId, UpdateCommentDto commentDto){
         log.info("Request for updating comment with Id: {}", commentId);
-        commentService.updateCommentById(commentId, commentDto);
+        return commentService.updateCommentById(commentId, commentDto);
     }
 
     @DeleteMapping("/id")

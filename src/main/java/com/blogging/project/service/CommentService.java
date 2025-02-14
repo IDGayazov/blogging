@@ -49,7 +49,7 @@ public class CommentService {
         log.info("Deleting comment by Id: {}", commentId);
     }
 
-    public void saveComment(CreateCommentDto commentDto){
+    public Comment saveComment(CreateCommentDto commentDto){
         Comment comment = commentMapper.toComment(commentDto);
 
         Optional<User> optionalUser = userRepository.findById(commentDto.userId());
@@ -65,22 +65,24 @@ public class CommentService {
         comment.setCreatedAt(LocalDate.now());
         comment.setUpdatedAt(LocalDate.now());
 
-        commentRepository.save(comment);
+        Comment createdComment = commentRepository.save(comment);
         log.info("Save comment with Id: {}", comment.getId());
+
+        return createdComment;
     }
 
-    public void updateCommentById(UUID commentId, UpdateCommentDto updateCommentDto){
-        Optional<Comment> optionalComment = commentRepository.findById(commentId);
-
-        Comment comment = optionalComment.orElseThrow(
+    public Comment updateCommentById(UUID commentId, UpdateCommentDto updateCommentDto){
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new EntityNotFoundException(String.format(COMMENT_NOT_FOUND_MESSAGE, commentId))
         );
 
-        comment.setUpdatedAt(updateCommentDto.updatedAt());
+        comment.setUpdatedAt(LocalDate.now());
         comment.setContent(updateCommentDto.content());
 
-        commentRepository.save(comment);
+        Comment updatedComment = commentRepository.save(comment);
         log.info("Update comment with Id: {}", commentId);
+
+        return updatedComment;
     }
 
 }
