@@ -23,16 +23,20 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User create(User user){
+        log.info("Creating user: {}", user.getUsername());
         if(userRepository.existsByUsername(user.getUsername())){
             throw new UserAlreadyExistsException("User with this username is already exists");
         }
         if(userRepository.existsByEmail(user.getEmail())){
             throw new UserAlreadyExistsException("User with this email is already exists");
         }
+        user.setCreatedAt(LocalDate.now());
+        user.setUpdatedAt(LocalDate.now());
         return userRepository.save(user);
     }
 
     public User getByUsername(String username){
+        log.info("Fetching user: {}", username);
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
@@ -46,7 +50,7 @@ public class UserService {
         return getByUsername(username);
     }
 
-    public UpdatedUserDto updateUser(UUID userId, UpdatedUserDto userDto){
+    public User updateUser(UUID userId, UpdatedUserDto userDto){
         log.info("Request for updating user: {}", userDto);
 
         User user = userRepository.findById(userId)
@@ -60,6 +64,14 @@ public class UserService {
             }
         );
 
+        userRepository.findByEmail(userDto.email()).ifPresent(
+                (u) -> {
+                    if(!u.getId().equals(userId)){
+                        throw new UserAlreadyExistsException("Email is already exists");
+                    }
+                }
+        );
+
         user.setEmail(userDto.email());
         user.setUpdatedAt(LocalDate.now());
         user.setBio(userDto.bio());
@@ -68,20 +80,10 @@ public class UserService {
         user.setLastname(userDto.lastname());
         user.setUsername(userDto.username());
 
-        UpdatedUserDto updatedUserDto = new UpdatedUserDto(
-                userDto.email(),
-                userDto.username(),
-                userDto.firstname(),
-                userDto.lastname(),
-                userDto.avatarUrl(),
-                userDto.bio(),
-                user.getUpdatedAt()
-        );
-
         userRepository.save(user);
         log.info("Update user with id: {}", user.getId());
 
-        return updatedUserDto;
+        return user;
     }
 
 }

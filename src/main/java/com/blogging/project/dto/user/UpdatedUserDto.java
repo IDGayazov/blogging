@@ -17,7 +17,6 @@ public record UpdatedUserDto(
         @NotBlank(message="Lastname can't be empty")
         String lastname,
         String avatarUrl,
-        String bio,
-        LocalDate updatedAt
+        String bio
 ) {
 }

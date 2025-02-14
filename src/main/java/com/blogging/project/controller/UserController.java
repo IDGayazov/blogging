@@ -1,6 +1,7 @@
 package com.blogging.project.controller;
 
 import com.blogging.project.dto.user.UpdatedUserDto;
+import com.blogging.project.entity.User;
 import com.blogging.project.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +21,7 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping("/{id}")
-    public UpdatedUserDto updateUser(@PathVariable("id") UUID userId, @RequestBody @Valid UpdatedUserDto updatedUserDto){
+    public User updateUser(@PathVariable("id") UUID userId, @RequestBody @Valid UpdatedUserDto updatedUserDto){
         return userService.updateUser(userId, updatedUserDto);
     }
 
