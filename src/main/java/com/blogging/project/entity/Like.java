@@ -26,7 +26,7 @@ import java.util.UUID;
 public class Like {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.UUID)
     private UUID id;
 
     @ManyToOne
