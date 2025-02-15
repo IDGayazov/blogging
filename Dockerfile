@@ -1,15 +1,22 @@
-FROM openjdk:17-slim
+# Используем базовый образ с Java 17
+FROM maven:3.8.4-openjdk-17-slim AS build
 
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
+# Устанавливаем необходимые пакеты (если они действительно нужны)
 RUN apt-get update -y && \
-apt-get install findutils -y && \
-apt-get clean
+    apt-get install -y findutils && \
+    apt-get clean
 
+# Копируем только нужные файлы (используйте .dockerignore для исключения ненужных файлов)
 COPY . .
 
-RUN mvn build -x test -Pversion=0.0.1-SNAPSHOT
+# Собираем проект с помощью Maven
+RUN mvn clean package -DskipTests
 
-EXPOSE 8080
+# Указываем порт, который будет использоваться приложением
+EXPOSE 8082
 
-ENTRYPOINT ["java", "-jar", "build/libs/app-0.0.1-SNAPSHOT.jar"]
+# Запускаем приложение
+ENTRYPOINT ["java", "-jar", "target/project-0.0.1-SNAPSHOT.jar"]

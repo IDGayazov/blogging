@@ -7,6 +7,19 @@ services:
       POSTGRES_PASSWORD: admin
     ports:
       - "5434:5432"
+
+  app:
+    image: blogging-app
+    build: .
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/blog_service
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    ports:
+      - "8082:8082"
+    depends_on:
+      - db
+
   admin:
     image: adminer
     restart: always
