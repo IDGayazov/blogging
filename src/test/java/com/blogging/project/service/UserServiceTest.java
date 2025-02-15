@@ -3,6 +3,7 @@ package com.blogging.project.service;
 import com.blogging.project.dto.user.UpdatedUserDto;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.UserAlreadyExistsException;
+import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -26,6 +27,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ArticleRepository articleRepository;
 
     @InjectMocks
     private UserService userService;
@@ -159,5 +163,12 @@ class UserServiceTest {
 
             assertThrows(UserAlreadyExistsException.class, () -> userService.updateUser(userId, userDto));
         }
+    }
+
+    @Test
+    void testGetAllArticles() {
+        final UUID userId = UUID.randomUUID();
+        userService.getAllArticles(userId);
+        verify(articleRepository).findAllByUser_Id(userId);
     }
 }
