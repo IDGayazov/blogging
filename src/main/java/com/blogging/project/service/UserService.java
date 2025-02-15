@@ -1,9 +1,11 @@
 package com.blogging.project.service;
 
 import com.blogging.project.dto.user.UpdatedUserDto;
+import com.blogging.project.entity.Article;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.exceptions.UserAlreadyExistsException;
+import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -21,6 +24,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ArticleRepository articleRepository;
 
     public User create(User user){
         log.info("Creating user: {}", user.getUsername());
@@ -82,8 +86,12 @@ public class UserService {
 
         userRepository.save(user);
         log.info("Update user with id: {}", user.getId());
-
         return user;
+    }
+
+    public List<Article> getAllArticles(UUID userId){
+        log.info("Request for fetching articles for user by id {}", userId);
+        return articleRepository.findAllByUser_Id(userId);
     }
 
 }
