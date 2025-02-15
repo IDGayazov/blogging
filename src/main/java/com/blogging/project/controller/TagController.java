@@ -19,7 +19,7 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("v1/tag")
+@RequestMapping("v1/tags")
 public class TagController {
 
     private final TagService tagService;

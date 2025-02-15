@@ -1,5 +1,6 @@
 package com.blogging.project.exceptions;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Hidden
 @ControllerAdvice
 public class GlobalExceptionHandler {
 

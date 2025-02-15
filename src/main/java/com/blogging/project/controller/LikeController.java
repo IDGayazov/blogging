@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/v1/like")
+@RequestMapping("/v1/likes")
 @RequiredArgsConstructor
 public class LikeController {
 

@@ -46,15 +46,14 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(request -> request
                         // Можно указать конкретный путь, * - 1 уровень вложенности, ** - любое количество уровней вложенности
                         .requestMatchers("/v1/auth/**").permitAll()
-                        .requestMatchers("/v1/user/**").authenticated()
-                        .requestMatchers("/v1/comment/**").authenticated()
-                        .requestMatchers("/v1/article/**").permitAll()
+                        .requestMatchers("/v1/users/**").authenticated()
+                        .requestMatchers("/v1/comments/**").authenticated()
+                        .requestMatchers("/v1/articles/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs*/**",
-                                "/webjars/**", "/swagger-ui.html",
-                                "/swagger-resources/**", "/swagger.json",
+                                "/webjars/**", "/swagger-ui.html", "/swagger-resources/**", "/swagger.json",
                                 "/configuration/ui", "/configuration/security", "/v3/**").permitAll()
                         .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
