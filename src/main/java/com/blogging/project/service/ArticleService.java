@@ -4,11 +4,13 @@ import com.blogging.project.dto.article.CreateArticleDto;
 import com.blogging.project.dto.article.UpdateArticleDto;
 import com.blogging.project.entity.Article;
 import com.blogging.project.entity.Category;
+import com.blogging.project.entity.Comment;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.mapper.ArticleMapper;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.CategoryRepository;
+import com.blogging.project.repository.CommentRepository;
 import com.blogging.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,7 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final CommentRepository commentRepository;
     private final ArticleMapper articleMapper;
 
     public Article saveArticle(CreateArticleDto articleDto){
@@ -55,6 +58,11 @@ public class ArticleService {
         log.info("Fetching article with id: {}", articleId);
         return articleRepository.findById(articleId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId)));
+    }
+
+    public List<Comment> getAllCommentsByArticleId(UUID articleId){
+        log.info("Fetching comments with articleId: {}", articleId);
+        return commentRepository.findAllByArticle_Id(articleId);
     }
 
     public List<Article> getAllArticles(){

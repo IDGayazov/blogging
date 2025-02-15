@@ -9,6 +9,7 @@ import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.mapper.ArticleMapper;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.CategoryRepository;
+import com.blogging.project.repository.CommentRepository;
 import com.blogging.project.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +41,9 @@ class ArticleServiceTest {
 
     @Mock
     private CategoryRepository categoryRepository;
+
+    @Mock
+    private CommentRepository commentRepository;
 
     @Mock
     private ArticleMapper articleMapper;
@@ -141,6 +145,13 @@ class ArticleServiceTest {
         UUID articleId = UUID.randomUUID();
         articleService.removeArticleById(articleId);
         verify(articleRepository).deleteById(articleId);
+    }
+
+    @Test
+    void testGetAllCommentsForArticle(){
+        UUID articleId = UUID.randomUUID();
+        articleService.getAllCommentsByArticleId(articleId);
+        verify(commentRepository).findAllByArticle_Id(articleId);
     }
 
     @Nested

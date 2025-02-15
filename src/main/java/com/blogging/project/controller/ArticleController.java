@@ -3,6 +3,7 @@ package com.blogging.project.controller;
 import com.blogging.project.dto.article.CreateArticleDto;
 import com.blogging.project.dto.article.UpdateArticleDto;
 import com.blogging.project.entity.Article;
+import com.blogging.project.entity.Comment;
 import com.blogging.project.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,12 @@ public class ArticleController {
     public Article fetchArticleById(@PathVariable("id") UUID articleId){
         log.info("Receive request for fetch article by Id: {}", articleId);
         return articleService.getArticleById(articleId);
+    }
+
+    @GetMapping("/{id}/comments")
+    public List<Comment> fetchAllArticlesForComment(@PathVariable("id") UUID articleId){
+        log.info("Receive request for fetching all comments");
+        return articleService.getAllCommentsByArticleId(articleId);
     }
 
     @PostMapping
