@@ -54,7 +54,7 @@ public class SecurityConfiguration {
                                 "/swagger-resources/**", "/swagger.json",
                                 "/configuration/ui", "/configuration/security", "/v3/**").permitAll()
                         .requestMatchers("/endpoint", "/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
+                        .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
