@@ -22,7 +22,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="Like")
+@Table(name="Likes")
 public class Like {
 
     @Id

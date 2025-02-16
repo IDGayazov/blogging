@@ -9,6 +9,9 @@ RUN apt-get update -y && \
     apt-get install -y findutils && \
     apt-get clean
 
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Копируем только нужные файлы (используйте .dockerignore для исключения ненужных файлов)
 COPY . .
 
@@ -19,4 +22,5 @@ RUN mvn clean package -DskipTests
 EXPOSE 8082
 
 # Запускаем приложение
-ENTRYPOINT ["java", "-jar", "target/project-0.0.1-SNAPSHOT.jar"]
+# ENTRYPOINT ["java", "-jar", "target/project-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["/entrypoint.sh"]

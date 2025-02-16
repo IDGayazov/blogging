@@ -7,6 +7,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                      tableName: USERS
         - createTable:
             tableName: USERS
             columns:
@@ -77,6 +82,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: ARTICLE
         - createTable:
             tableName: ARTICLE
             columns:
@@ -132,6 +142,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: COMMENT
         - createTable:
             tableName: COMMENT
             columns:
@@ -177,6 +192,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+           - onFail: MARK_RAN
+           - not:
+                - tableExists:
+                    tableName: CATEGORY
         - createTable:
             tableName: CATEGORY
             columns:
@@ -212,6 +232,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: TAG
         - createTable:
             tableName: TAG
             columns:
@@ -242,6 +267,11 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: ARTICLE_TAGS
         - createTable:
             tableName: ARTICLE_TAGS
             columns:
@@ -272,8 +302,13 @@ databaseChangeLog:
             dbms: postgresql
             endDelimiter: ;
             sql: CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: LIKES
         - createTable:
-            tableName: LIKE
+            tableName: LIKES
             columns:
               - column:
                   name: id
@@ -298,8 +333,14 @@ databaseChangeLog:
       id: unique_constraint
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - uniqueConstraintExists:
+                    tableName: LIKES
+                    constraintName: unique_user_article
         - addUniqueConstraint:
-            tableName: LIKE
+            tableName: LIKES
             columnNames: user_id, article_id
             constraintName: unique_user_article
 
@@ -307,6 +348,11 @@ databaseChangeLog:
       id: create_article_user_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                     foreignKeyName: fk_article_users
         - addForeignKeyConstraint:
             constraintName: FK_ARTICLE_USERS
             baseTableName: ARTICLE
@@ -318,6 +364,11 @@ databaseChangeLog:
       id: create_user_comment_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_comment_users
         - addForeignKeyConstraint:
             constraintName: FK_COMMENT_USERS
             baseTableName: COMMENT
@@ -329,6 +380,11 @@ databaseChangeLog:
       id: create_article_comment_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_comment_article
         - addForeignKeyConstraint:
             constraintName: FK_COMMENT_ARTICLE
             baseTableName: COMMENT
@@ -340,6 +396,11 @@ databaseChangeLog:
       id: create_article_category_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_article_category
         - addForeignKeyConstraint:
             constraintName: FK_ARTICLE_CATEGORY
             baseTableName: ARTICLE
@@ -351,6 +412,11 @@ databaseChangeLog:
       id: create_article_tags_article_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_article_tag
         - addForeignKeyConstraint:
             constraintName: FK_ARTICLE_TAG
             baseTableName: ARTICLE_TAGS
@@ -362,6 +428,11 @@ databaseChangeLog:
       id: create_article_tags_tag_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_tag_article
         - addForeignKeyConstraint:
             constraintName: FK_TAG_ARTICLE
             baseTableName: ARTICLE_TAGS
@@ -373,9 +444,14 @@ databaseChangeLog:
       id: create_article_likes_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_like_article
         - addForeignKeyConstraint:
             constraintName: FK_LIKE_ARTICLE
-            baseTableName: LIKE
+            baseTableName: LIKES
             baseColumnNames: ARTICLE_ID
             referencedTableName: ARTICLE
             referencedColumnNames: ID
@@ -384,9 +460,14 @@ databaseChangeLog:
       id: create_user_likes_fk
       author: Ilnaz
       changes:
+        - preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - foreignKeyConstraintExists:
+                    foreignKeyName: fk_like_user
         - addForeignKeyConstraint:
             constraintName: FK_LIKE_USER
-            baseTableName: LIKE
+            baseTableName: LIKES
             baseColumnNames: USER_ID
             referencedTableName: USERS
             referencedColumnNames: ID
