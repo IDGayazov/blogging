@@ -6,7 +6,7 @@ target/
 !**/src/main/resources/application-dev.properties
 secrets
 
-**/application-dev.properties
+application-dev.properties
 
 ### STS ###
 .apt_generated
