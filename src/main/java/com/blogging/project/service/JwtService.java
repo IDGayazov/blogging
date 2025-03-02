@@ -23,7 +23,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class JwtService {
 
-    private static final int EXPIRATION_TIME = 100000 * 60 * 24;
+    private static final int EXPIRATION_TIME = 1000 * 10 * 60;
 
     @Value("${token.signing.key}")
     private String jwtSigningKey;

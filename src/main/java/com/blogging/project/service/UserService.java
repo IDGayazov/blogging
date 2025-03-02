@@ -94,4 +94,11 @@ public class UserService {
         return articleRepository.findAllByUser_Id(userId);
     }
 
+    public User getUserById(UUID userId){
+        log.info("Request for fetching user by id");
+        return userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException(String.format("User id: %s not found", userId))
+        );
+    }
+
 }

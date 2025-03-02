@@ -24,6 +24,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("userId") @NotNull UUID userId){
+        return userService.getUserById(userId);
+    }
+
     @PutMapping("/{id}")
     public User updateUser(@PathVariable("id") UUID userId, @RequestBody @Valid UpdatedUserDto updatedUserDto){
         return userService.updateUser(userId, updatedUserDto);
