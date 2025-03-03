@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
+    private final ImageService imageService;
 
     public User create(User user){
         log.info("Creating user: {}", user.getUsername());
@@ -60,29 +62,21 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        userRepository.findByUsername(userDto.username()).ifPresent(
-            (u) -> {
-                if(!u.getId().equals(userId)){
-                    throw new UserAlreadyExistsException("Username is already exists");
-                }
-            }
-        );
+        checkUniqueUsernameAndEmail(userId, userDto);
 
-        userRepository.findByEmail(userDto.email()).ifPresent(
-                (u) -> {
-                    if(!u.getId().equals(userId)){
-                        throw new UserAlreadyExistsException("Email is already exists");
-                    }
-                }
-        );
+        Optional.ofNullable(userDto.avatarImage())
+                .ifPresent(avatarImage -> {
+                    String filePath = imageService.handleFileUpload(userDto.avatarImage());
+                    user.setAvatarUrl(filePath);
+                });
 
-        user.setEmail(userDto.email());
+        Optional.ofNullable(userDto.email()).filter(email -> !email.isEmpty()).ifPresent(user::setEmail);
+        Optional.ofNullable(userDto.username()).filter(username -> !username.isEmpty()).ifPresent(user::setUsername);
+        Optional.ofNullable(userDto.firstname()).filter(firstname -> !firstname.isEmpty()).ifPresent(user::setFirstname);
+        Optional.ofNullable(userDto.lastname()).filter(lastname -> !lastname.isEmpty()).ifPresent(user::setLastname);
+        Optional.ofNullable(userDto.bio()).filter(bio -> !bio.isEmpty()).ifPresent(user::setBio);
+
         user.setUpdatedAt(LocalDate.now());
-        user.setBio(userDto.bio());
-        user.setAvatarUrl(userDto.avatarUrl());
-        user.setFirstname(userDto.firstname());
-        user.setLastname(userDto.lastname());
-        user.setUsername(userDto.username());
 
         userRepository.save(user);
         log.info("Update user with id: {}", user.getId());
@@ -98,6 +92,24 @@ public class UserService {
         log.info("Request for fetching user by id");
         return userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException(String.format("User id: %s not found", userId))
+        );
+    }
+
+    private void checkUniqueUsernameAndEmail(UUID userId, UpdatedUserDto userDto) {
+        userRepository.findByUsername(userDto.username()).ifPresent(
+                (u) -> {
+                    if(!u.getId().equals(userId)){
+                        throw new UserAlreadyExistsException("Username is already exists");
+                    }
+                }
+        );
+
+        userRepository.findByEmail(userDto.email()).ifPresent(
+                (u) -> {
+                    if(!u.getId().equals(userId)){
+                        throw new UserAlreadyExistsException("Email is already exists");
+                    }
+                }
         );
     }
 

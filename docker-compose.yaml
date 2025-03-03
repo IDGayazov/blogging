@@ -20,6 +20,9 @@ services:
       SPRING_DATASOURCE_USERNAME_FILE: /run/secrets/spring_datasource_username
       SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/spring_datasource_password
       TOKEN_SIGNING_KEY_FILE: /run/secrets/token_signing_key
+      FILE_UPLOAD_DIR: /app/images
+    volumes:
+      - ./images:/app/images
     secrets:
       - spring_datasource_username
       - spring_datasource_password

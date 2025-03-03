@@ -22,6 +22,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
@@ -30,6 +36,9 @@ class UserServiceTest {
 
     @Mock
     private ArticleRepository articleRepository;
+
+    @Mock
+    private ImageService imageService;
 
     @InjectMocks
     private UserService userService;
@@ -104,12 +113,18 @@ class UserServiceTest {
 
         @BeforeEach
         public void setUp(){
+            byte[] content = "Hello, World!".getBytes();
             userDto = new UpdatedUserDto(
                  "email",
                  "username",
                  "firstname",
                  "lastname",
-                 "avatarUrl",
+                    new MockMultipartFile(
+                      "file",
+                      "file.txt",
+                      "file",
+                        content
+                    ),
                  "bio"
             );
         }
@@ -121,6 +136,7 @@ class UserServiceTest {
 
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(userRepository.findByUsername(userDto.username())).thenReturn(Optional.of(user));
+            when(imageService.handleFileUpload(userDto.avatarImage())).thenReturn("filePath");
 
             User updatedUser = userService.updateUser(userId, userDto);
 
@@ -128,7 +144,7 @@ class UserServiceTest {
 
             assertEquals(userDto.username(), user.getUsername());
             assertEquals(userDto.bio(), user.getBio());
-            assertEquals(userDto.avatarUrl(), user.getAvatarUrl());
+            assertTrue(user.getAvatarUrl().endsWith("filePath"));
             assertEquals(userDto.firstname(), user.getFirstname());
             assertEquals(userDto.lastname(), user.getLastname());
             assertEquals(userDto.email(), user.getEmail());
@@ -170,5 +186,60 @@ class UserServiceTest {
         final UUID userId = UUID.randomUUID();
         userService.getAllArticles(userId);
         verify(articleRepository).findAllByUser_Id(userId);
+    }
+}
+
+class MockMultipartFile implements MultipartFile {
+
+    private final String name;
+    private final String originalFilename;
+    private final String contentType;
+    private final byte[] content;
+
+    public MockMultipartFile(String name, String originalFilename, String contentType, byte[] content) {
+        this.name = name;
+        this.originalFilename = originalFilename;
+        this.contentType = contentType;
+        this.content = content;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getOriginalFilename() {
+        return originalFilename;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return content == null || content.length == 0;
+    }
+
+    @Override
+    public long getSize() {
+        return content.length;
+    }
+
+    @Override
+    public byte[] getBytes() throws IOException {
+        return content;
+    }
+
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return new ByteArrayInputStream(content);
+    }
+
+    @Override
+    public void transferTo(java.io.File dest) throws IOException, IllegalStateException {
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

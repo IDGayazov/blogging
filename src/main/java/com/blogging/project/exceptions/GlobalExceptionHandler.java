@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +29,30 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(InternalError.class)
     public ResponseEntity<AppError> internalServerErrorHandler(InternalError error){
+        log.error(error.getMessage(), error);
+        AppError appError = new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), error.getMessage());
+        return new ResponseEntity<>(appError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(FileUploadException.class)
+    public ResponseEntity<AppError> fileUploadExceptionHandler(FileUploadException error){
+        log.error(error.getMessage(), error);
+        AppError appError = new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), error.getMessage());
+        return new ResponseEntity<>(appError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<AppError> fileNotFoundExceptionHandler(FileNotFoundException error){
+        log.error(error.getMessage(), error);
+        AppError appError = new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), error.getMessage());
+        return new ResponseEntity<>(appError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(FileFetchException.class)
+    public ResponseEntity<AppError> fileFetchExceptionHandler(FileFetchException error){
         log.error(error.getMessage(), error);
         AppError appError = new AppError(HttpStatus.INTERNAL_SERVER_ERROR.value(), error.getMessage());
         return new ResponseEntity<>(appError, HttpStatus.INTERNAL_SERVER_ERROR);
