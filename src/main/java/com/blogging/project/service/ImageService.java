@@ -2,6 +2,7 @@ package com.blogging.project.service;
 
 import com.blogging.project.exceptions.FileFetchException;
 import com.blogging.project.exceptions.FileUploadException;
+import com.ibm.icu.text.Transliterator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,10 +38,11 @@ public class ImageService {
             if(!Files.exists(uploadingPath)){
                 Files.createDirectories(uploadingPath);
             }
-            String uploadFilePath = uploadingPath.resolve(hashFileName(fileName)).toString();
+            String mangledName = hashFileName(fileName);
+            String uploadFilePath = uploadingPath.resolve(mangledName).toString();
             file.transferTo(new File(uploadFilePath));
             log.info("Upload file into: {}", uploadFilePath);
-            return uploadFilePath;
+            return mangledName;
         }catch(IOException e) {
             log.error("Can't upload file: {}", fileName, e);
             throw new FileUploadException("Can't upload file");
@@ -64,7 +66,10 @@ public class ImageService {
     }
 
     private static String hashFileName(String fileName){
-        return UUID.randomUUID() + "_" + fileName;
+        String CYRILLIC_TO_LATIN = "Russian-Latin/BGN";
+        Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
+        String result = toLatinTrans.transliterate(fileName);
+        return UUID.randomUUID() + "_" + result;
     }
 
 }
