@@ -3,6 +3,8 @@ package com.blogging.project.mock;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -57,6 +59,14 @@ public class MockMultipartFile implements MultipartFile {
 
     @Override
     public void transferTo(java.io.File dest) throws IOException, IllegalStateException {
-        throw new UnsupportedOperationException("Not implemented");
+        if (dest == null) {
+            throw new IllegalArgumentException("Destination file cannot be null");
+        }
+
+        Files.copy(
+            new java.io.ByteArrayInputStream(content), 
+            dest.toPath(),
+            StandardCopyOption.REPLACE_EXISTING
+        );
     }
 }
