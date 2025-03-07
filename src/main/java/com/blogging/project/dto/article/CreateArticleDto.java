@@ -1,12 +1,18 @@
 package com.blogging.project.dto.article;
 
 import java.util.UUID;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile; 
 
 public record CreateArticleDto(
-        UUID userId,
+        @NotBlank(message="Title can't be empty")
         String title,
+
+        @NotBlank(message="Content can't be empty")
         String content,
-        String avatarUrl,
+
+        MultipartFile image,
+        UUID userId,
         UUID categoryId
 ) {
 }
