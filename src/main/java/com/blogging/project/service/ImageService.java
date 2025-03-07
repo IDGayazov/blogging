@@ -19,49 +19,63 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ImageService {
 
+    private final static String FILE_FETCH_ERROR_TEMPLATE = "Can't fetch file: %s";
+    private final static String FILE_UPLOAD_ERROR_TEMPLATE = "Can't upload file: %s";
+    private final static String FILENAME_ERROR = "Filename can't be null";
+    private final static String FILENAME_NOT_FOUND_ERROR_TEMPLATE = "Filename not found %s";
+
     @Value("${file.upload-dir}")
     String fileDir;
 
     public String handleFileUpload(MultipartFile file){
-        String fileName = file.getOriginalFilename();
-        if(fileName == null){
-            throw new IllegalArgumentException();
-        }
-
-        Path uploadingPath = Path.of(fileDir);
         try {
-            if(!Files.exists(uploadingPath)){
-                Files.createDirectories(uploadingPath);
-            }
-            String mangledName = hashFileName(fileName);
-            String uploadFilePath = uploadingPath.resolve(mangledName).toString();
-            file.transferTo(new File(uploadFilePath));
-            log.info("Upload file into: {}", uploadFilePath);
-            return mangledName;
+            String changedName = saveFileAndGetName(file);
+            log.info("Upload file: {}", changedName);
+            return changedName;
         }catch(IOException e) {
-            log.error("Can't upload file: {}", fileName, e);
-            throw new FileUploadException("Can't upload file");
+            throw new FileUploadException(format(FILE_UPLOAD_ERROR_TEMPLATE, file.getOriginalFilename()));
         }
     }
 
     public Resource handleFileFetch(String fileName){
         try {
-            Path filePath = Paths.get(fileDir).resolve(fileName).normalize();
-            Resource resource = new UrlResource(filePath.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return resource;
-            } else {
-                log.error("Can't find file {}", fileName);
-                throw new FileNotFoundException();
-            }
+            return getFileResource(fileName);
         } catch (IOException e) {
-            log.error("Can't fetch file {}", fileName, e);
-            throw new FileFetchException(String.format("Can't fetch file: %s", fileName));
+            throw new FileFetchException(format(FILE_FETCH_ERROR_TEMPLATE, fileName));
+        }
+    }
+
+    private String saveFileAndGetName(MultipartFile file) throws IOException{
+        String fileName = file.getOriginalFilename();
+        checkFileNameNotNullElseThrowException(fileName);
+
+        Path uploadingPath = Path.of(fileDir);    
+        checkDirExistsElseCreate(uploadingPath);
+
+        String changedName = hashFileName(fileName);
+        String uploadFilePath = uploadingPath.resolve(changedName).toString();
+        file.transferTo(new File(uploadFilePath));
+
+        return changedName;
+    }
+
+    private Resource getFileResource(String fileName)
+        throws IOException, FileNotFoundException
+    {
+        Path filePath = Paths.get(fileDir).resolve(fileName).normalize();
+        Resource resource = new UrlResource(filePath.toUri());
+        if (resource.exists() || resource.isReadable()) {
+            log.info("Sending file: {}", fileName);
+            return resource;
+        } else {
+            throw new FileNotFoundException(format(FILENAME_NOT_FOUND_ERROR_TEMPLATE, fileName));
         }
     }
 
@@ -70,6 +84,18 @@ public class ImageService {
         Transliterator toLatinTrans = Transliterator.getInstance(CYRILLIC_TO_LATIN);
         String result = toLatinTrans.transliterate(fileName);
         return UUID.randomUUID() + "_" + result;
+    }
+
+    private static void checkFileNameNotNullElseThrowException(String fileName){
+        if(fileName == null){
+            throw new IllegalArgumentException(FILENAME_ERROR);
+        }
+    }
+
+    private static void checkDirExistsElseCreate(Path path) throws IOException{
+        if(!Files.exists(path)){
+            Files.createDirectories(path);
+        }
     }
 
 }
