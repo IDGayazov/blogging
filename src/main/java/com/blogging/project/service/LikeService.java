@@ -21,17 +21,13 @@ import java.util.UUID;
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
-    private final ArticleRepository articleRepository;
+
+    private final UserService userService;
+    private final ArticleService articleService;
 
     public void likeArticleByUser(UUID userId, UUID articleId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found")
-        );
-
-        Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new EntityNotFoundException("Article not found")
-        );
+        User user = userService.getUserById(userId);
+        Article article = articleService.getArticleById(articleId);
 
         Like like = new Like();
         like.setUser(user);
@@ -42,17 +38,14 @@ public class LikeService {
     }
 
     public Set<Like> getAllLikesForUser(UUID userId){
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found")
-        );
+        User user = userService.getUserById(userId);
+
         log.info("Fetching likes for user {}", userId);
         return user.getLikes();
     }
 
     public Set<Like> getAllLikesForArticle(UUID articleId){
-        Article article = articleRepository.findById(articleId).orElseThrow(
-                () -> new EntityNotFoundException("Article not found")
-        );
+        Article article = articleService.getArticleById(articleId);
         log.info("Fetching likes for article {}", articleId);
         return article.getLikes();
     }

@@ -21,10 +21,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ArticleService {
+
+    private static final String CATEGORY_NOT_FOUND_MESSAGE_TEMPLATE = "Category with Id: %s not found";
+    private static final String ARTICLE_NOT_FOUND_MESSAGE_TEMPLATE = "Article with Id: %s not found";
+    private static final String USER_NOT_FOUND_MESSAGE_TEMPLATE = "User with Id: %s not found";
+
+    private final ImageService imageService;
 
     private final ArticleRepository articleRepository;
     private final UserRepository userRepository;
@@ -33,31 +41,15 @@ public class ArticleService {
     private final ArticleMapper articleMapper;
 
     public Article saveArticle(CreateArticleDto articleDto){
-        Article article = articleMapper.toArticle(articleDto);
-
-        Optional<User> userOpt = userRepository.findById(articleDto.userId());
-        userOpt.ifPresentOrElse(article::setUser, () -> {
-            throw new EntityNotFoundException(String.format("User with Id: %s  not found", articleDto.userId()));
-        });
-
-        Optional<Category> categoryOpt = categoryRepository.findById(articleDto.categoryId());
-        categoryOpt.ifPresentOrElse(article::setCategory, () -> {
-            throw new EntityNotFoundException(String.format("Category with Id: %s  not found", articleDto.categoryId()));
-        });
-
-        article.setCreatedAt(LocalDate.now());
-        article.setUpdatedAt(LocalDate.now());
-
+        Article article = getNewArticleFromCreateArticleDto(articleDto);
         articleRepository.save(article);
         log.info("Save article with id: {}", article.getId());
-
         return article;
     }
 
     public Article getArticleById(UUID articleId){
         log.info("Fetching article with id: {}", articleId);
-        return articleRepository.findById(articleId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId)));
+        return getArticleByIdOrElseThrowException(articleId);
     }
 
     public List<Comment> getAllCommentsByArticleId(UUID articleId){
@@ -76,25 +68,73 @@ public class ArticleService {
     }
 
     public Article updateArticleById(UUID articleId, UpdateArticleDto articleDto){
-        Optional<Article> currentArticleOpt = articleRepository.findById(articleId);
-        Article article = currentArticleOpt.orElseThrow(
-                () -> new EntityNotFoundException(String.format("Article with Id: %s not found", articleId))
-        );
+        Article article = getArticleByIdOrElseThrowException(articleId);
 
-        Optional<Category> categoryOpt = categoryRepository.findById(articleDto.categoryId());
-        categoryOpt.ifPresentOrElse(article::setCategory,
-                () -> {
-                    throw new EntityNotFoundException(String.format("Category with Id: %s  not found", articleDto.categoryId()));
-                }
-        );
+        updateArticleFieldsFromUpdateArticleDto(article, articleDto);
+        
+        articleRepository.save(article);
 
-        article.setTitle(articleDto.title());
-        article.setContent(articleDto.content());
-        article.setAvatarUrl(articleDto.avatarUrl());
+        log.info("Update article with id: {}", articleId);
+
+        return article;
+    }
+
+    private Category getCategoryByIdOrElseThrowException(UUID categoryId){
+        return categoryRepository.findById(categoryId).orElseThrow(
+            () -> new EntityNotFoundException(format(CATEGORY_NOT_FOUND_MESSAGE_TEMPLATE, categoryId))
+        );
+    }
+
+    private User getUserByIdOrElseThrowException(UUID userId){
+        return userRepository.findById(userId).orElseThrow(
+            () -> new EntityNotFoundException(format(USER_NOT_FOUND_MESSAGE_TEMPLATE, userId))
+        );
+    }
+
+    private Article getArticleByIdOrElseThrowException(UUID articleId){
+        return articleRepository.findById(articleId).orElseThrow(
+            () -> new EntityNotFoundException(format(ARTICLE_NOT_FOUND_MESSAGE_TEMPLATE, articleId))
+        );
+    }
+
+    private Article getNewArticleFromCreateArticleDto(CreateArticleDto articleDto){
+        Article article = articleMapper.toArticle(articleDto);
+
+        Optional.ofNullable(articleDto.userId()).ifPresent(userId -> {
+            User user = getUserByIdOrElseThrowException(userId);
+            article.setUser(user);
+        });
+
+        Optional.ofNullable(articleDto.categoryId()).ifPresent(categoryId -> {
+            Category category = getCategoryByIdOrElseThrowException(categoryId);
+            article.setCategory(category);
+        });
+
+        Optional.ofNullable(articleDto.image()).ifPresent(image -> {
+            article.setAvatarUrl(imageService.handleFileUpload(image));
+        });
+
+        article.setCreatedAt(LocalDate.now());
         article.setUpdatedAt(LocalDate.now());
 
-        Article updatedArticle = articleRepository.save(article);
-        log.info("Update article with id: {}", articleId);
-        return updatedArticle;
+        return article;
     }
+
+    private void updateArticleFieldsFromUpdateArticleDto(Article article, UpdateArticleDto articleDto){
+        Optional.ofNullable(articleDto.title()).ifPresent(article::setTitle);
+
+        Optional.ofNullable(articleDto.content()).ifPresent(article::setContent);
+
+        Optional.ofNullable(articleDto.categoryId()).ifPresent(categoryId -> {
+            Category category = getCategoryByIdOrElseThrowException(categoryId);
+            article.setCategory(category);
+        });
+
+        Optional.ofNullable(articleDto.image()).ifPresent(image -> {
+            article.setAvatarUrl(imageService.handleFileUpload(image));
+        });
+
+        article.setUpdatedAt(LocalDate.now());
+    }
+
 }

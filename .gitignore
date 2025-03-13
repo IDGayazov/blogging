@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 !**/src/main/resources/application-dev.properties
 secrets
+images
 
 application-dev.properties
 

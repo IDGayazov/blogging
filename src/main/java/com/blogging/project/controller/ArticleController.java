@@ -7,12 +7,15 @@ import com.blogging.project.entity.Comment;
 import com.blogging.project.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -45,16 +48,34 @@ public class ArticleController {
         return articleService.getAllCommentsByArticleId(articleId);
     }
 
-    @PostMapping
-    public Article createArticle(@RequestBody CreateArticleDto articleDto){
+    @PostMapping(consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Article createArticle(
+        @RequestParam(required = true) String title,
+        @RequestParam(required = true) String content,
+        @RequestParam(required = false) UUID userId,
+        @RequestParam(required = false) UUID categoryId,
+        @RequestParam(required = false) MultipartFile image
+    ){
         log.info("Receive request for saving article...");
+        CreateArticleDto articleDto = new CreateArticleDto(
+            title, content, image, userId, categoryId
+        );
         return articleService.saveArticle(articleDto);
     }
 
-    @PutMapping("/{id}")
-    public Article updateArticle(@PathVariable("id") UUID articleId, @RequestBody UpdateArticleDto updateArticleDto){
+    @PutMapping(path="/{id}", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
+    public Article updateArticle(
+        @PathVariable("id") UUID articleId, 
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String content,
+        @RequestParam(required = false) UUID categoryId,
+        @RequestParam(required = false) MultipartFile image
+    ){
         log.info("Receive request for updating article with id: {}", articleId);
-        return articleService.updateArticleById(articleId, updateArticleDto);
+        UpdateArticleDto articleDto = new UpdateArticleDto(
+            title, content, image, categoryId
+        );
+        return articleService.updateArticleById(articleId, articleDto);
     }
 
     @DeleteMapping("/{id}")

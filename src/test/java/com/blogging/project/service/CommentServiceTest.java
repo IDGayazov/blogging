@@ -7,9 +7,7 @@ import com.blogging.project.entity.Comment;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.mapper.CommentMapper;
-import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.CommentRepository;
-import com.blogging.project.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,10 +33,10 @@ class CommentServiceTest {
     private CommentRepository commentRepository;
 
     @Mock
-    private ArticleRepository articleRepository;
+    private ArticleService articleService;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
     private CommentMapper commentMapper;
@@ -113,8 +111,8 @@ class CommentServiceTest {
             Article article = new Article();
             article.setId(articleId);
 
-            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-            when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
+            when(userService.getUserById(userId)).thenReturn(user);
+            when(articleService.getArticleById(articleId)).thenReturn(article);
             when(commentRepository.save(any(Comment.class))).thenAnswer(ans -> ans.getArguments()[0]);
 
             Comment createdComment = commentService.saveComment(commentDto);
@@ -128,7 +126,7 @@ class CommentServiceTest {
 
         @Test
         void testUserEntityNotFoundException() {
-            when(userRepository.findById(userId)).thenReturn(Optional.empty());
+            when(userService.getUserById(userId)).thenThrow(new EntityNotFoundException());
             assertThrows(EntityNotFoundException.class, () -> commentService.saveComment(commentDto));
         }
 
@@ -137,8 +135,8 @@ class CommentServiceTest {
             User user = new User();
             user.setId(userId);
 
-            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-            when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
+            when(userService.getUserById(userId)).thenReturn(user);
+            when(articleService.getArticleById(articleId)).thenThrow(new EntityNotFoundException());
 
             assertThrows(EntityNotFoundException.class, () -> commentService.saveComment(commentDto));
         }

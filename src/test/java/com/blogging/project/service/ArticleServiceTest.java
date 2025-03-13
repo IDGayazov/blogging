@@ -7,6 +7,7 @@ import com.blogging.project.entity.Category;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.mapper.ArticleMapper;
+import com.blogging.project.service.ImageService;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.CategoryRepository;
 import com.blogging.project.repository.CommentRepository;
@@ -29,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.blogging.project.mock.MockMultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 class ArticleServiceTest {
@@ -48,6 +50,9 @@ class ArticleServiceTest {
     @Mock
     private ArticleMapper articleMapper;
 
+    @Mock
+    private ImageService imageService;
+
     @InjectMocks
     private ArticleService articleService;
 
@@ -56,31 +61,39 @@ class ArticleServiceTest {
         final UUID userId = UUID.randomUUID();
         final UUID categoryId = UUID.randomUUID();
         final String articleTitle = "Article title";
+        final String imageUrl = "image url";
         final String articleContent = "Article content";
-        final String avatarUrl = "Article avatar url";
+        
         CreateArticleDto articleDto;
         Article mappedArticle;
 
         @BeforeEach()
         public void setUp(){
+            byte[] content = "Hello, World!".getBytes();
             articleDto = new CreateArticleDto(
-                    userId,
                     articleTitle,
                     articleContent,
-                    avatarUrl,
+                    new MockMultipartFile(
+                      "file",
+                      "file.txt",
+                      "file",
+                       content
+                    ),
+                    userId,
                     categoryId
             );
 
             mappedArticle = new Article();
+
             mappedArticle.setTitle(articleTitle);
             mappedArticle.setContent(articleContent);
-            mappedArticle.setAvatarUrl(avatarUrl);
 
             when(articleMapper.toArticle(articleDto)).thenReturn(mappedArticle);
         }
 
         @Test
         void testSuccess() {
+            when(imageService.handleFileUpload(articleDto.image())).thenReturn(imageUrl);
             when(articleRepository.save(any(Article.class)))
                     .thenAnswer((argument) -> argument.getArguments()[0]);
             when(userRepository.findById(userId)).thenReturn(Optional.of(new User()));
@@ -92,7 +105,7 @@ class ArticleServiceTest {
 
             assertEquals(articleContent, article.getContent());
             assertEquals(articleTitle, article.getTitle());
-            assertEquals(avatarUrl, article.getAvatarUrl());
+            assertEquals(imageUrl, article.getAvatarUrl());
             assertEquals(LocalDate.now(), article.getCreatedAt());
             assertEquals(LocalDate.now(), article.getUpdatedAt());
         }
@@ -160,7 +173,7 @@ class ArticleServiceTest {
         final UUID categoryId = UUID.randomUUID();
         final String articleTitle = "Article title";
         final String articleContent = "Article content";
-        final String avatarUrl = "Article avatar url";
+        final String imageUrl = "image url";
 
         UpdateArticleDto articleDto;
         Article article;
@@ -168,10 +181,16 @@ class ArticleServiceTest {
 
         @BeforeEach
         public void setUp(){
+            byte[] content = "Hello, World!".getBytes();
             articleDto = new UpdateArticleDto(
                     articleTitle,
                     articleContent,
-                    avatarUrl,
+                    new MockMultipartFile(
+                      "file",
+                      "file.txt",
+                      "file",
+                       content
+                    ),
                     categoryId
             );
 
@@ -181,6 +200,7 @@ class ArticleServiceTest {
 
         @Test
         void testSuccess() {
+            when(imageService.handleFileUpload(articleDto.image())).thenReturn(imageUrl);
             when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
             when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
             when(articleRepository.save(any(Article.class))).thenAnswer((args) -> args.getArguments()[0]);
@@ -191,7 +211,7 @@ class ArticleServiceTest {
 
             assertEquals(articleTitle, updatedArticle.getTitle());
             assertEquals(articleContent, updatedArticle.getContent());
-            assertEquals(avatarUrl, updatedArticle.getAvatarUrl());
+            assertEquals(imageUrl, updatedArticle.getAvatarUrl());
             assertEquals(LocalDate.now(), updatedArticle.getUpdatedAt());
         }
 

@@ -14,8 +14,8 @@ public interface ArticleMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "avatarUrl", ignore = true)
     @Mapping(target = "title", source = "createArticleDto.title")
     @Mapping(target = "content", source = "createArticleDto.content")
-    @Mapping(target = "avatarUrl", source = "createArticleDto.avatarUrl")
     Article toArticle(CreateArticleDto createArticleDto);
 }

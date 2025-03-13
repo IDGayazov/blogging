@@ -42,7 +42,9 @@ public class UserController {
             @RequestParam(required = false) MultipartFile avatarImage,
             @RequestParam(required = false) String bio
     ){
-        UpdatedUserDto updatedUserDto = new UpdatedUserDto(email, username, firstname, lastname, avatarImage, bio);
+        UpdatedUserDto updatedUserDto = new UpdatedUserDto(
+            email, username, firstname, lastname, avatarImage, bio
+        );
         return userService.updateUser(userId, updatedUserDto);
     }
 

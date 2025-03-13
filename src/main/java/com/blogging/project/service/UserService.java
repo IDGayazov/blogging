@@ -19,10 +19,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static java.lang.String.format;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
+
+    private static final String USERNAME_EXISTS_ERROR_TEMPLATE = "User with this username %s is already exists";
+    private static final String EMAIL_EXISTS_ERROR_TEMPLATE = "User with this email %s is already exists";
+    private static final String USERNAME_NOT_FOUND_ERROR_TEMPLATE = "Username %s not found";
+    private static final String USER_NOT_FOUND_ERROR_TEMPLATE = "User id: %s not found";
+
 
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
@@ -30,21 +38,20 @@ public class UserService {
 
     public User create(User user){
         log.info("Creating user: {}", user.getUsername());
-        if(userRepository.existsByUsername(user.getUsername())){
-            throw new UserAlreadyExistsException("User with this username is already exists");
-        }
-        if(userRepository.existsByEmail(user.getEmail())){
-            throw new UserAlreadyExistsException("User with this email is already exists");
-        }
+
+        checkUniqueUsernameAndEmail(user.getUsername(), user.getEmail());
+
         user.setCreatedAt(LocalDate.now());
         user.setUpdatedAt(LocalDate.now());
+
         return userRepository.save(user);
     }
 
     public User getByUsername(String username){
         log.info("Fetching user: {}", username);
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(
+                () -> new UsernameNotFoundException(format(USERNAME_NOT_FOUND_ERROR_TEMPLATE, username))
+        );
     }
 
     public UserDetailsService userDetailsService() {
@@ -59,10 +66,9 @@ public class UserService {
     public User updateUser(UUID userId, UpdatedUserDto userDto){
         log.info("Request for updating user: {}", userDto);
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = getUserById(userId);
 
-        checkUniqueUsernameAndEmail(userId, userDto);
+        checkSingleUserWithUsernameAndEmail(userId, userDto);
 
         Optional.ofNullable(userDto.avatarImage())
                 .ifPresent(avatarImage -> {
@@ -91,15 +97,24 @@ public class UserService {
     public User getUserById(UUID userId){
         log.info("Request for fetching user by id");
         return userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException(String.format("User id: %s not found", userId))
+                () -> new EntityNotFoundException(format(USER_NOT_FOUND_ERROR_TEMPLATE, userId))
         );
     }
 
-    private void checkUniqueUsernameAndEmail(UUID userId, UpdatedUserDto userDto) {
+    private void checkUniqueUsernameAndEmail(String username, String email){
+        if(userRepository.existsByUsername(username)){
+            throw new UserAlreadyExistsException(format(USERNAME_EXISTS_ERROR_TEMPLATE, username));
+        }
+        if(userRepository.existsByEmail(email)){
+            throw new UserAlreadyExistsException(format(EMAIL_EXISTS_ERROR_TEMPLATE, email));
+        }
+    }
+
+    private void checkSingleUserWithUsernameAndEmail(UUID userId, UpdatedUserDto userDto) {
         userRepository.findByUsername(userDto.username()).ifPresent(
                 (u) -> {
                     if(!u.getId().equals(userId)){
-                        throw new UserAlreadyExistsException("Username is already exists");
+                        throw new UserAlreadyExistsException(format(USERNAME_EXISTS_ERROR_TEMPLATE, userDto.username()));
                     }
                 }
         );
@@ -107,7 +122,7 @@ public class UserService {
         userRepository.findByEmail(userDto.email()).ifPresent(
                 (u) -> {
                     if(!u.getId().equals(userId)){
-                        throw new UserAlreadyExistsException("Email is already exists");
+                        throw new UserAlreadyExistsException(format(EMAIL_EXISTS_ERROR_TEMPLATE, userDto.email()));
                     }
                 }
         );
