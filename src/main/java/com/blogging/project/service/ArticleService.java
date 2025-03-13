@@ -8,7 +8,6 @@ import com.blogging.project.entity.Comment;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.mapper.ArticleMapper;
-import com.blogging.project.service.ImageService;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.CategoryRepository;
 import com.blogging.project.repository.CommentRepository;
@@ -122,13 +121,9 @@ public class ArticleService {
     }
 
     private void updateArticleFieldsFromUpdateArticleDto(Article article, UpdateArticleDto articleDto){
-        Optional.ofNullable(articleDto.title()).ifPresent(title -> {
-            article.setTitle(title);
-        });
+        Optional.ofNullable(articleDto.title()).ifPresent(article::setTitle);
 
-        Optional.ofNullable(articleDto.content()).ifPresent(content -> {
-            article.setContent(content);
-        });
+        Optional.ofNullable(articleDto.content()).ifPresent(article::setContent);
 
         Optional.ofNullable(articleDto.categoryId()).ifPresent(categoryId -> {
             Category category = getCategoryByIdOrElseThrowException(categoryId);
