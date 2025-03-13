@@ -30,12 +30,14 @@ public class ImageService {
     private final static String FILE_UPLOAD_ERROR_TEMPLATE = "Can't upload file: %s";
     private final static String FILENAME_ERROR = "Filename can't be null";
     private final static String FILENAME_NOT_FOUND_ERROR_TEMPLATE = "Filename not found %s";
+    private final static String FILE_INCORRECT_ERROR = "File is incorrect";
 
     @Value("${file.upload-dir}")
     String fileDir;
 
     public String handleFileUpload(MultipartFile file){
         try {
+            checkMultipartFileCorrectElseThrowException(file);
             String changedName = saveFileAndGetName(file);
             log.info("Upload file: {}", changedName);
             return changedName;
@@ -54,14 +56,14 @@ public class ImageService {
 
     private String saveFileAndGetName(MultipartFile file) throws IOException{
         String fileName = file.getOriginalFilename();
-        checkFileNameNotNullElseThrowException(fileName);
+        checkFileNameCorrectThrowException(fileName);
 
         Path uploadingPath = Path.of(fileDir);    
         checkDirExistsElseCreate(uploadingPath);
 
         String changedName = hashFileName(fileName);
-        String uploadFilePath = uploadingPath.resolve(changedName).toString();
-        file.transferTo(new File(uploadFilePath));
+        Path uploadFilePath = uploadingPath.resolve(changedName);
+        file.transferTo(uploadFilePath.toFile());
 
         return changedName;
     }
@@ -86,8 +88,8 @@ public class ImageService {
         return UUID.randomUUID() + "_" + result;
     }
 
-    private static void checkFileNameNotNullElseThrowException(String fileName){
-        if(fileName == null){
+    private static void checkFileNameCorrectThrowException(String fileName){
+        if(fileName == null || fileName.trim().isEmpty()){
             throw new IllegalArgumentException(FILENAME_ERROR);
         }
     }
@@ -95,6 +97,12 @@ public class ImageService {
     private static void checkDirExistsElseCreate(Path path) throws IOException{
         if(!Files.exists(path)){
             Files.createDirectories(path);
+        }
+    }
+
+    private static void checkMultipartFileCorrectElseThrowException(MultipartFile file){
+        if(file == null || file.isEmpty()){
+            throw new IllegalArgumentException(FILE_INCORRECT_ERROR);
         }
     }
 
