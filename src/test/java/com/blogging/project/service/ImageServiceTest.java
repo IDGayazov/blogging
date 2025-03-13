@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.doThrow;
 
@@ -77,17 +76,15 @@ public class ImageServiceTest{
 	@Nested
 	class FileFetchTest{
 
-		private MockMultipartFile mockFile;
-
-		@Test
+        @Test
 		void testSuccess() throws IOException{
 			byte[] content = "Hello, World!".getBytes();
-			mockFile = new MockMultipartFile(
-				"file",
-		        "file.txt",
-		        "text/plain",
-		        content
-			);
+            MockMultipartFile mockFile = new MockMultipartFile(
+                    "file",
+                    "file.txt",
+                    "text/plain",
+                    content
+            );
 			mockFile.transferTo(uploadingDir.resolve("file.txt").toFile());
 
 			Resource resource = imageService.handleFileFetch("file.txt");
@@ -96,8 +93,13 @@ public class ImageServiceTest{
 
 
 		@Test
-		void throwFileUploadException() throws IOException {
-			assertThrows(FileFetchException.class, () -> imageService.handleFileFetch("file.txt"));
+		void throwFileNotFoundException() {
+			FileFetchException exception = assertThrows(FileFetchException.class,
+					() -> imageService.handleFileFetch("file.txt")
+			);
+
+			assertEquals("Can't fetch file: file.txt", exception.getMessage());
+            assertInstanceOf(FileNotFoundException.class, exception.getCause());
 		}
 	}
 

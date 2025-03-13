@@ -11,7 +11,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,7 +49,7 @@ public class ImageService {
         try {
             return getFileResource(fileName);
         } catch (IOException e) {
-            throw new FileFetchException(format(FILE_FETCH_ERROR_TEMPLATE, fileName));
+            throw new FileFetchException(format(FILE_FETCH_ERROR_TEMPLATE, fileName), e);
         }
     }
 
@@ -68,9 +67,7 @@ public class ImageService {
         return changedName;
     }
 
-    private Resource getFileResource(String fileName)
-        throws IOException, FileNotFoundException
-    {
+    private Resource getFileResource(String fileName) throws IOException {
         Path filePath = Paths.get(fileDir).resolve(fileName).normalize();
         Resource resource = new UrlResource(filePath.toUri());
         if (resource.exists() || resource.isReadable()) {
