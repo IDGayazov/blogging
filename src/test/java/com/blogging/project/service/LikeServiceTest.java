@@ -4,9 +4,7 @@ import com.blogging.project.entity.Article;
 import com.blogging.project.entity.Like;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
-import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.LikeRepository;
-import com.blogging.project.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,10 +26,10 @@ class LikeServiceTest {
     private LikeRepository likeRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
-    private ArticleRepository articleRepository;
+    private ArticleService articleService;
 
     @InjectMocks
     private LikeService likeService;
@@ -48,8 +45,8 @@ class LikeServiceTest {
         Article article = new Article();
         article.setId(articleId);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(articleRepository.findById(articleId)).thenReturn(Optional.of(article));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(articleService.getArticleById(articleId)).thenReturn(article);
         when(likeRepository.save(any(Like.class))).thenAnswer(ans -> ans.getArguments()[0]);
 
         likeService.likeArticleByUser(userId, articleId);
@@ -67,7 +64,7 @@ class LikeServiceTest {
     void testUserEntityNotFoundException() {
         UUID userId = UUID.randomUUID();
         UUID articleId = UUID.randomUUID();
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+        when(userService.getUserById(userId)).thenThrow(new EntityNotFoundException());
         assertThrows(EntityNotFoundException.class, () -> likeService.likeArticleByUser(userId, articleId));
     }
 
@@ -79,8 +76,8 @@ class LikeServiceTest {
         User user = new User();
         user.setId(userId);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(articleRepository.findById(articleId)).thenReturn(Optional.empty());
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(articleService.getArticleById(articleId)).thenThrow(new EntityNotFoundException());
 
         assertThrows(EntityNotFoundException.class, () -> likeService.likeArticleByUser(userId, articleId));
     }

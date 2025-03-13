@@ -25,18 +25,18 @@ import java.util.UUID;
 public class CommentService {
 
     private static final String COMMENT_NOT_FOUND_MESSAGE = "Comment with Id: %s not found";
-    private static final String USER_NOT_FOUND_MESSAGE = "User with Id: %s not found";
-    private static final String ARTICLE_NOT_FOUND_MESSAGE = "Article with Id: %s not found";
 
     private final CommentRepository commentRepository;
-    private final ArticleRepository articleRepository;
-    private final UserRepository userRepository;
     private final CommentMapper commentMapper;
+
+    private final UserService userService;
+    private final ArticleService articleService;
 
     public Comment getCommentById(UUID commentId){
         log.info("Fetching comment by Id: {}", commentId);
-        return commentRepository.findById(commentId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(COMMENT_NOT_FOUND_MESSAGE, commentId)));
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new EntityNotFoundException(String.format(COMMENT_NOT_FOUND_MESSAGE, commentId))
+        );
     }
 
     public List<Comment> getAllComments(){
@@ -52,16 +52,11 @@ public class CommentService {
     public Comment saveComment(CreateCommentDto commentDto){
         Comment comment = commentMapper.toComment(commentDto);
 
-        Optional<User> optionalUser = userRepository.findById(commentDto.userId());
-        optionalUser.ifPresentOrElse(comment::setUser, () -> {
-            throw new EntityNotFoundException(String.format(USER_NOT_FOUND_MESSAGE, commentDto.userId()));
-        });
+        User user = userService.getUserById(commentDto.userId());
+        Article article = articleService.getArticleById(commentDto.articleId());
 
-        Optional<Article> optionalArticle = articleRepository.findById(commentDto.articleId());
-        optionalArticle.ifPresentOrElse(comment::setArticle, () -> {
-            throw new EntityNotFoundException(String.format(ARTICLE_NOT_FOUND_MESSAGE, commentDto.articleId()));
-        });
-
+        comment.setUser(user);
+        comment.setArticle(article);
         comment.setCreatedAt(LocalDate.now());
         comment.setUpdatedAt(LocalDate.now());
 
@@ -72,9 +67,7 @@ public class CommentService {
     }
 
     public Comment updateCommentById(UUID commentId, UpdateCommentDto updateCommentDto){
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new EntityNotFoundException(String.format(COMMENT_NOT_FOUND_MESSAGE, commentId))
-        );
+        Comment comment = getCommentById(commentId);
 
         comment.setUpdatedAt(LocalDate.now());
         comment.setContent(updateCommentDto.content());
@@ -84,5 +77,4 @@ public class CommentService {
 
         return updatedComment;
     }
-
 }
