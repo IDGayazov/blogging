@@ -1,17 +1,15 @@
 package com.blogging.project.controller;
 
 import com.blogging.project.dto.user.UpdatedUserDto;
+import com.blogging.project.dto.user.UserDto;
 import com.blogging.project.entity.Article;
-import com.blogging.project.entity.User;
 import com.blogging.project.service.UserService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,12 +26,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable("id") @NotNull UUID userId){
-        return userService.getUserById(userId);
+    public UserDto getUserById(@PathVariable("id") @NotNull UUID userId){
+        return userService.getUserDtoById(userId);
     }
 
     @PutMapping(path="/{id}", consumes={MediaType.MULTIPART_FORM_DATA_VALUE})
-    public User updateUser(
+    public UserDto updateUser(
             @PathVariable("id") UUID userId,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String username,

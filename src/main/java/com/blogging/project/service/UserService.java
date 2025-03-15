@@ -1,10 +1,12 @@
 package com.blogging.project.service;
 
 import com.blogging.project.dto.user.UpdatedUserDto;
+import com.blogging.project.dto.user.UserDto;
 import com.blogging.project.entity.Article;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.EntityNotFoundException;
 import com.blogging.project.exceptions.UserAlreadyExistsException;
+import com.blogging.project.mapper.UserMapper;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,10 +34,10 @@ public class UserService {
     private static final String USERNAME_NOT_FOUND_ERROR_TEMPLATE = "Username %s not found";
     private static final String USER_NOT_FOUND_ERROR_TEMPLATE = "User id: %s not found";
 
-
     private final UserRepository userRepository;
     private final ArticleRepository articleRepository;
     private final ImageService imageService;
+    private final UserMapper userMapper;
 
     public User create(User user){
         log.info("Creating user: {}", user.getUsername());
@@ -45,6 +48,11 @@ public class UserService {
         user.setUpdatedAt(LocalDate.now());
 
         return userRepository.save(user);
+    }
+
+    public UserDto getUserDtoById(UUID userId){
+        User user = getUserById(userId);
+        return getUserDtoByUser(user);
     }
 
     public User getByUsername(String username){
@@ -63,7 +71,7 @@ public class UserService {
         return getByUsername(username);
     }
 
-    public User updateUser(UUID userId, UpdatedUserDto userDto){
+    public UserDto updateUser(UUID userId, UpdatedUserDto userDto){
         log.info("Request for updating user: {}", userDto);
 
         User user = getUserById(userId);
@@ -86,7 +94,7 @@ public class UserService {
 
         userRepository.save(user);
         log.info("Update user with id: {}", user.getId());
-        return user;
+        return getUserDtoByUser(user);
     }
 
     public List<Article> getAllArticles(UUID userId){
@@ -126,6 +134,19 @@ public class UserService {
                     }
                 }
         );
+    }
+
+    private UserDto getUserDtoByUser(User user){
+        UserDto userDto = userMapper.toUserDto(user);
+        if(user.getArticles() != null){
+            userDto.setArticles(new ArrayList<>());
+            userDto.getArticles().addAll(
+                    user.getArticles().stream()
+                            .map(Article::getId)
+                            .toList()
+            );
+        }
+        return userDto;
     }
 
 }

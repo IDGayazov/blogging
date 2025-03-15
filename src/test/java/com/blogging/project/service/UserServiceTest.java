@@ -1,8 +1,10 @@
 package com.blogging.project.service;
 
 import com.blogging.project.dto.user.UpdatedUserDto;
+import com.blogging.project.dto.user.UserDto;
 import com.blogging.project.entity.User;
 import com.blogging.project.exceptions.UserAlreadyExistsException;
+import com.blogging.project.mapper.UserMapper;
 import com.blogging.project.repository.ArticleRepository;
 import com.blogging.project.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +39,9 @@ class UserServiceTest {
 
     @Mock
     private ImageService imageService;
+
+    @Mock
+    private UserMapper userMapper;
 
     @InjectMocks
     private UserService userService;
@@ -133,18 +140,34 @@ class UserServiceTest {
             when(userRepository.findById(userId)).thenReturn(Optional.of(user));
             when(userRepository.findByUsername(userDto.username())).thenReturn(Optional.of(user));
             when(imageService.handleFileUpload(userDto.avatarImage())).thenReturn("filePath");
+            when(userMapper.toUserDto(any(User.class))).thenAnswer((invocation) -> {
+                User usr = invocation.getArgument(0);
+                return new UserDto(
+                        usr.getId(),
+                        usr.getUsername(),
+                        usr.getFirstname(),
+                        usr.getLastname(),
+                        usr.getEmail(),
+                        usr.getBio(),
+                        usr.getAvatarUrl(),
+                        usr.getCreatedAt(),
+                        usr.getUpdatedAt(),
+                        new ArrayList<>()
+                );
 
-            User updatedUser = userService.updateUser(userId, userDto);
+            });
+
+            UserDto updatedUser = userService.updateUser(userId, userDto);
 
             verify(userRepository).save(user);
 
-            assertEquals(userDto.username(), user.getUsername());
-            assertEquals(userDto.bio(), user.getBio());
+            assertEquals(userDto.username(), updatedUser.getUsername());
+            assertEquals(userDto.bio(), updatedUser.getBio());
             assertTrue(user.getAvatarUrl().endsWith("filePath"));
-            assertEquals(userDto.firstname(), user.getFirstname());
-            assertEquals(userDto.lastname(), user.getLastname());
-            assertEquals(userDto.email(), user.getEmail());
-            assertEquals(LocalDate.now(), user.getUpdatedAt());
+            assertEquals(userDto.firstname(), updatedUser.getFirstname());
+            assertEquals(userDto.lastname(), updatedUser.getLastname());
+            assertEquals(userDto.email(), updatedUser.getEmail());
+            assertEquals(LocalDate.now(), updatedUser.getUpdatedAt());
         }
 
         @Test
