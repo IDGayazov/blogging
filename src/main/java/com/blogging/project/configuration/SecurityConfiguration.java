@@ -48,6 +48,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/v1/auth/**").permitAll()
                         .requestMatchers("/v1/users/**").authenticated()
                         .requestMatchers("/v1/comments/**").authenticated()
+                        .requestMatchers("/v1/ai/**").authenticated()
                         .requestMatchers("/v1/articles/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs*/**",
                                 "/webjars/**", "/swagger-ui.html", "/swagger-resources/**", "/swagger.json",
