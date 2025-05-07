@@ -1,8 +1,8 @@
 # Блог-платформа (REST API)
 
 [![Java](https://img.shields.io/badge/Java-17%2B-blue)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.1-green)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)](https://www.postgresql.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.1-green)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue)](https://www.postgresql.org/)
 [![Swagger](https://img.shields.io/badge/Swagger-3.0-green)](https://swagger.io/)
 
 REST API для платформы блогов с авторизацией, комментариями и лайками.  
